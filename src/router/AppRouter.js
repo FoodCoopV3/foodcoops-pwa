@@ -5,6 +5,7 @@ import { About } from '../About';
 import { MainBestellung } from '../bestellung/MainBestellung';
 import { MainEinkauf } from '../einkauf/MainEinkauf';
 import { MainManagement } from '../MainManagement';
+import { MainKontrolle } from '../kontrolle/MainKontrolle';
 import { PrivateRoute } from '../auth/PrivateRoute';
 import { Home } from '../Home';
 import './AppRouter.css';
@@ -32,6 +33,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
       '/mainBestellung': 'Bestellung',
       '/mainEinkauf': 'Einkauf',
       '/mainManagement': 'Management',
+      '/mainBestellungskontrolle': 'Bestellungskontrolle',
       '/about': 'Impressum',
     };
 
@@ -68,6 +70,11 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
                 </Link>
               </li>
               <li>
+                <Link to="/mainBestellungskontrolle" onClick={toggleMenu}>
+                  Bestellungskontrolle
+                </Link>
+              </li>
+              <li>
                 <AuthButton />
               </li>
             </ul>
@@ -84,6 +91,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
         <PrivateRoute roles={["Einkäufer"]} path="/mainBestellung" component={MainBestellung} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainEinkauf" component={MainEinkauf} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainManagement" component={MainManagement} />
+        <PrivateRoute roles={["Einkäufer"]} path="/mainBestellungskontrolle" component={MainKontrolle} />
         <Route path="/" component={Home} />
       </Switch>
       <footer>
