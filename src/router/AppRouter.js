@@ -1,4 +1,5 @@
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import FactCheckIcon from '@mui/icons-material/FactCheck';
 import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
 import InventoryIcon from '@mui/icons-material/Inventory';
@@ -97,10 +98,20 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
               </Typography>
             </ListItemButton>
           </Link>
+          <Link to="/mainBestellungskontrolle">
+            <ListItemButton sx={{ color: "grey" }}>
+              <ListItemIcon>
+                <FactCheckIcon />
+              </ListItemIcon>
+              <Typography variant="h6">
+                Bestellungskontrolle
+              </Typography>
+            </ListItemButton>
+          </Link>
           <Divider />
           <Link to="/about">
             <ListItemButton sx={{ color: "grey" }}>
-              <ListItemIcon> 
+              <ListItemIcon>
                 <InfoIcon/>
               </ListItemIcon>
               <Typography variant="h6">
