@@ -169,13 +169,15 @@ export function Kontrolle() {
                     </AccordionSummary>
                     <AccordionDetails>
                         <ListGroup>
-                            <ListGroup.Item>
+                          {zuViellieferung.map((item, index) => (
+                              <ListGroup.Item>
                                 <div className='ms-2 me-auto'>
-                                    <div>
-                                        {zuWeniglieferung.map((item, index) => (<li key={index}>{item.Name} - {item.Differenz} {item.Einheit}</li>))}
+                                    <div key={index}>
+                                        {item.Name} - {item.Differenz} {item.Einheit}
                                     </div>
                                 </div>
-                            </ListGroup.Item>
+                              </ListGroup.Item>
+                            ))}
                         </ListGroup>
                     </AccordionDetails>
                 </Accordion>
@@ -185,13 +187,15 @@ export function Kontrolle() {
                     </AccordionSummary>
                     <AccordionDetails>
                         <ListGroup>
+                          {zuWeniglieferung.map((item, index) => (
                             <ListGroup.Item>
-                                <div className='ms-2 me-auto'>
-                                    <div>
-                                        {zuWeniglieferung.map((item, index) => (<li key={index}>{item.Name} - {item.Differenz} {item.Einheit}</li>))}
-                                    </div>
-                                </div>
+                              <div className='ms-2 me-auto'>
+                                  <div key={index}>
+                                      {item.Name} - {item.Differenz} {item.Einheit}
+                                  </div>
+                              </div>
                             </ListGroup.Item>
+                          ))}
                         </ListGroup>
                     </AccordionDetails>
                 </Accordion>
