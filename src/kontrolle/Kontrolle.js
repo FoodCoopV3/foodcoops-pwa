@@ -6,11 +6,16 @@ import Typography from '@mui/material/Typography';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import jsPDF from 'jspdf';
 import React from "react";
-import { Button, ListGroup } from 'react-bootstrap';
+import { Button, ListGroup, Table } from 'react-bootstrap';
 import "./kontrolle.css";
+import { useApi } from '../ApiService';
+import { useKeycloak } from "@react-keycloak/web";
 
 
 export function Kontrolle() {
+
+    const api = useApi();
+
     const foodItems = [
         {
           "Name": "Apfel",
@@ -168,17 +173,25 @@ export function Kontrolle() {
                         <Typography variant="h6" gutterBottom>Zu viel geliefert</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <ListGroup>
+                      {api.readFrischBestand}                 
+                      <Table>
+                        <thead>
+                        <tr>
+                          <th>Produkt</th>
+                          <th>Menge</th>
+                          <th>Einheit</th>
+                        </tr>
+                        </thead>
+                        <tbody>
                           {zuViellieferung.map((item, index) => (
-                              <ListGroup.Item>
-                                <div className='ms-2 me-auto'>
-                                    <div key={index}>
-                                        {item.Name} - {item.Differenz} {item.Einheit}
-                                    </div>
-                                </div>
-                              </ListGroup.Item>
-                            ))}
-                        </ListGroup>
+                            <tr>
+                              <td>{item.Name}</td>
+                              <td>{item.Differenz}</td>
+                              <td>{item.Einheit}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </Table>
                     </AccordionDetails>
                 </Accordion>
                 <Accordion defaultExpanded>
@@ -186,17 +199,24 @@ export function Kontrolle() {
                     <Typography variant="h6" gutterBottom>Zu wenig geliefert</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <ListGroup>
-                          {zuWeniglieferung.map((item, index) => (
-                            <ListGroup.Item>
-                              <div className='ms-2 me-auto'>
-                                  <div key={index}>
-                                      {item.Name} - {item.Differenz} {item.Einheit}
-                                  </div>
-                              </div>
-                            </ListGroup.Item>
-                          ))}
-                        </ListGroup>
+                      <Table>
+                          <thead>
+                          <tr>
+                            <th>Produkt</th>
+                            <th>Menge</th>
+                            <th>Einheit</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                            {zuWeniglieferung.map((item, index) => (
+                              <tr>
+                                <td>{item.Name}</td>
+                                <td>{item.Differenz}</td>
+                                <td>{item.Einheit}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </Table>
                     </AccordionDetails>
                 </Accordion>
 
