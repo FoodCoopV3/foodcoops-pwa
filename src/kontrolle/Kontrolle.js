@@ -5,16 +5,35 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import jsPDF from 'jspdf';
-import React from "react";
-import { Button, ListGroup, Table } from 'react-bootstrap';
-import "./kontrolle.css";
+import React, { useEffect, useState } from "react";
+import { Button, Table } from 'react-bootstrap';
 import { useApi } from '../ApiService';
-import { useKeycloak } from "@react-keycloak/web";
+import "./kontrolle.css";
 
 
 export function Kontrolle() {
-
+    const [frischBestellung, getFrischBestellung] = useState([]);
     const api = useApi();
+
+    useEffect(() => {
+      const fetchFrischBestellung = async () => {
+        try {
+          const response = await api.readFrischBestellung();
+          const data = await response.json();
+          if (data && data._embedded && data._embedded.frischBestellungRepresentationList) {
+            getFrischBestellung(data._embedded.frischBestellungRepresentationList);
+            console.log(frischBestellung);
+          } else {
+              getFrischBestellung([]);
+              console.log(frischBestellung);
+          }
+        } catch (error) {
+          console.error('Error getting frischBestellung')
+        }
+      };
+
+      fetchFrischBestellung();
+    }, []);
 
     const foodItems = [
         {
@@ -166,6 +185,7 @@ export function Kontrolle() {
             doc.save("Lebensmittel_Liste.pdf");
         };
 
+
         return (
             <div className="main-einkauf">
                 <Accordion defaultExpanded>
@@ -173,7 +193,16 @@ export function Kontrolle() {
                         <Typography variant="h6" gutterBottom>Zu viel geliefert</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                      {api.readFrischBestand}                 
+                      {frischBestellung.map((order, index) => (
+                        <tr key={order.id}>
+                          <td>
+                            {order.id}
+                          </td>
+                          <td>
+                            {order.bestellmenge}
+                          </td>
+                        </tr>
+                      ))}
                       <Table>
                         <thead>
                         <tr>
