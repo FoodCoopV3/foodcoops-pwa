@@ -2,37 +2,41 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import Typography from '@mui/material/Typography';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import jsPDF from 'jspdf';
+import "jspdf-autotable"
 import React, { useEffect, useState } from "react";
 import { Button, Table } from 'react-bootstrap';
 import { useApi } from '../ApiService';
 import "./kontrolle.css";
+import { green, red } from '@mui/material/colors';
 
 
 export function Kontrolle() {
-    const [frischBestellung, getFrischBestellung] = useState([]);
+    const [discrepancyList, getDiscrepancyList] = useState([]);
     const api = useApi();
 
     useEffect(() => {
-      const fetchFrischBestellung = async () => {
+      const fetchDiscrepancyList = async () => {
         try {
-          const response = await api.readFrischBestellung();
+          const response = await api.readDiscrepancyOverviwe();
           const data = await response.json();
-          if (data && data._embedded && data._embedded.frischBestellungRepresentationList) {
-            getFrischBestellung(data._embedded.frischBestellungRepresentationList);
-            console.log(frischBestellung);
+          if (data && data.discrepancy) {
+            getDiscrepancyList(data.discrepancy);
+            console.log(data.discrepancy);
           } else {
-              getFrischBestellung([]);
-              console.log(frischBestellung);
+            getDiscrepancyList([]);
+            console.log(data.discrepancy);
           }
         } catch (error) {
           console.error('Error getting frischBestellung')
         }
       };
 
-      fetchFrischBestellung();
+      fetchDiscrepancyList();
     }, []);
 
     const foodItems = [
@@ -165,44 +169,52 @@ export function Kontrolle() {
     ];
 
     const listContent = () => {
-        const zuViellieferung = foodItems.filter(items => items.Status === "ZV");
-        const zuWeniglieferung = foodItems.filter(items => items.Status === "ZW");
+
+        const zuViellieferung = discrepancyList.filter(items => items.zuVielzuWenig > 0);
+        const zuWeniglieferung = discrepancyList.filter(items => items.zuVielzuWenig < 0);
 
         const generatePDF = () => {
             const doc = new jsPDF();
+
+            doc.setFontSize(16); // Größe der Schriftart setzen
+            doc.setFont("helvetica", "bold"); // Schriftart und Stil setzen (fett)
             doc.text("Liste der zu viel und zu wenig gelieferten Lebensmittel", 10, 10);
             
-            doc.text("Zu viel geliefert:", 10, 20);
-            zuViellieferung.forEach((item, index) => {
-            doc.text(`${item.Name} - ${item.Differenz} ${item.Einheit}`, 10, 30 + index * 10);
-            });
+            const columnNames = ["Produktbezeichnung", "Menge", "Einheit"];
 
-            doc.text("Zu wenig geliefert:", 10, zuViellieferung.length > 0 ? 30 + zuViellieferung.length * 10 : 20);
-            zuWeniglieferung.forEach((item, index) => {
-            doc.text(`${item.Name} - ${item.Differenz} ${item.Einheit}`, 10, (zuViellieferung.length > 0 ? 40 : 30) + zuViellieferung.length * 10 + index * 10);
-            });
-
+            if (zuViellieferung.length > 0) {
+              doc.setFontSize(10); // Größe der Schriftart setze
+              doc.text("Zu viel geliefert:", 10, 20);
+              const zuViellieferungRows = zuViellieferung.map(item => [item.bestand.name, item.zuVielzuWenig, item.bestand.einheit.name]);
+              doc.autoTable({
+                head: [columnNames],
+                body: zuViellieferungRows,
+                startY: 30
+              })
+            }
+            
+            if(zuWeniglieferung.length > 0){
+              const startY = zuViellieferung.length > 0 ? doc.lastAutoTable.finalY + 10 : 30;
+              doc.setFontSize(10); // Größe der Schriftart setze
+              doc.text("Zu wenig geliefert:", 10, startY - 10);
+              const zuWeniglieferungRows = zuWeniglieferung.map(item => [item.bestand.name, Math.abs(item.zuVielzuWenig), item.bestand.einheit.name]);
+              doc.autoTable({
+                head: [columnNames],
+                body: zuWeniglieferungRows,
+                startY: startY
+              });
+            }
+            
             doc.save("Lebensmittel_Liste.pdf");
         };
-
 
         return (
             <div className="main-einkauf">
                 <Accordion defaultExpanded>
                     <AccordionSummary aria-controls="panel1-content" id="panel1-header" expandIcon={<ExpandMoreIcon />}>
-                        <Typography variant="h6" gutterBottom>Zu viel geliefert</Typography>
+                        <Typography variant="h6" gutterBottom><AddBoxIcon sx={{color: green[500]}}/> Zu viel geliefert</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                      {frischBestellung.map((order, index) => (
-                        <tr key={order.id}>
-                          <td>
-                            {order.id}
-                          </td>
-                          <td>
-                            {order.bestellmenge}
-                          </td>
-                        </tr>
-                      ))}
                       <Table>
                         <thead>
                         <tr>
@@ -214,9 +226,9 @@ export function Kontrolle() {
                         <tbody>
                           {zuViellieferung.map((item, index) => (
                             <tr>
-                              <td>{item.Name}</td>
-                              <td>{item.Differenz}</td>
-                              <td>{item.Einheit}</td>
+                              <td>{item.bestand.name}</td>
+                              <td>{Math.abs(item.zuVielzuWenig)}</td>
+                              <td>{item.bestand.einheit.name}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -225,7 +237,7 @@ export function Kontrolle() {
                 </Accordion>
                 <Accordion defaultExpanded>
                     <AccordionSummary aria-controls="panel1-content" id="panel1-header"  expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant="h6" gutterBottom>Zu wenig geliefert</Typography>
+                    <Typography variant="h6" gutterBottom><IndeterminateCheckBoxIcon sx={{color: red[500]}}/> Zu wenig geliefert</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                       <Table>
@@ -239,9 +251,9 @@ export function Kontrolle() {
                           <tbody>
                             {zuWeniglieferung.map((item, index) => (
                               <tr>
-                                <td>{item.Name}</td>
-                                <td>{item.Differenz}</td>
-                                <td>{item.Einheit}</td>
+                                <td>{item.bestand.name}</td>
+                                <td>{Math.abs(item.zuVielzuWenig)}</td>
+                                <td>{item.bestand.einheit.name}</td>
                               </tr>
                             ))}
                           </tbody>

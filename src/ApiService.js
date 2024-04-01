@@ -48,6 +48,8 @@ export const ApiProvider = (props) => {
         readLastDeadline: props.readLastDeadline || readLastDeadline,
         readCurrentDeadline: props.readCurrentDeadline || readCurrentDeadline,
         createDeadline: props.createDeadline || createDeadline,
+
+        readDiscrepancyOverviwe: props.readDiscrepancyOverviwe || readDiscrepancyOverviwe,
     };
 
     return (
@@ -100,7 +102,9 @@ export const useApi = () => {
         readDeadline,
         readLastDeadline,
         readCurrentDeadline,
-        createDeadline
+        createDeadline,
+
+        readDiscrepancyOverviwe,
     };
 };
 
@@ -119,6 +123,9 @@ const BROTBESTELLUNG = "brotBestellung/";
 const DEADLINE = "deadline/";
 const LAST = "last/";
 const CURRENT = "getEndDateOfDeadline/";
+const GEBINDE = "gebinde/";
+const AUTODECIDE = "DiscrepancyAutoDecide/";
+const OVERVIWE = "bestellUebersicht/";
 
 
 // Produkt
@@ -356,3 +363,19 @@ const createDeadline = (data) =>
         },
         body: JSON.stringify({...data, id: "undefined"}),
     });
+
+// Autodecide Discrepancy
+
+const getDiscrepancy = (data) => 
+    fetch(BACKEND_URL + GEBINDE + AUTODECIDE, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({...data, id: "undefined"}),
+    });
+
+// Übersicht letzte Bestellung
+
+const readDiscrepancyOverviwe = () =>
+    fetch(BACKEND_URL + OVERVIWE + LAST);
