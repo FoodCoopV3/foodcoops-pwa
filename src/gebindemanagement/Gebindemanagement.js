@@ -1,18 +1,14 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {deepAssign, deepClone} from '../util'
 import {useApi} from '../ApiService';
 import {GebindemanagementTable} from "./GebindemanagementTable";
-import { Deadline } from '../deadline/Deadline';
+import NumberFormatComponent from '../logic/NumberFormatComponent';
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 
 export function Gebindemanagement(){
     const columns = React.useMemo(
         () => [
-            // {   Header: 'Frischbestellung-ID',
-            //     accessor: 'id'
-            // },
             {
                 Header: 'Produkt',
                 accessor: 'frischbestand.name',
@@ -22,12 +18,14 @@ export function Gebindemanagement(){
                 accessor: 'frischbestand.kategorie.name',
             },
             {
-                Header: 'Preis',
+                Header: 'Preis in €',
                 accessor: 'frischbestand.preis',
+                Cell: ({ value }) => <NumberFormatComponent value={value} />,
             },
             {
                 Header: 'Bestellmenge',
                 accessor: 'bestellmenge',
+                Cell: ({ value }) => <NumberFormatComponent value={value} />,
             },
             {
                 Header: 'Einheit',
@@ -36,6 +34,7 @@ export function Gebindemanagement(){
             {
                 Header: 'Gebindegröße',
                 accessor: 'frischbestand.gebindegroesse',
+                Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false} />,
             },
         ]
     );

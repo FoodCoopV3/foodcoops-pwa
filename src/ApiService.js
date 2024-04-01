@@ -1,9 +1,5 @@
 import React from 'react';
 
-const {createContext, useContext} = React;
-
-const ApiContext = createContext(null);
-
 export const ApiProvider = (props) => {
     const value = {
         createProdukt: props.createProdukt || createProdukt,
@@ -49,7 +45,12 @@ export const ApiProvider = (props) => {
         readCurrentDeadline: props.readCurrentDeadline || readCurrentDeadline,
         createDeadline: props.createDeadline || createDeadline,
 
-        readDiscrepancyOverviwe: props.readDiscrepancyOverviwe || readDiscrepancyOverviwe,
+        readEinkauf: props.readEinkauf || readEinkauf,
+        createEinkauf: props.createEinkauf || createEinkauf,
+        deleteEinkauf: props.deleteEinkauf || deleteEinkauf,
+        createBestandBuyObject: props.createBestandBuyObject || createBestandBuyObject,
+
+        readBestellUebersicht: props.readBestellUebersicht || readBestellUebersicht,
     };
 
     return (
@@ -104,7 +105,12 @@ export const useApi = () => {
         readCurrentDeadline,
         createDeadline,
 
-        readDiscrepancyOverviwe,
+        readEinkauf,
+        createEinkauf,
+        deleteEinkauf,
+        createBestandBuyObject,
+
+        readBestellUebersicht,
     };
 };
 
@@ -123,9 +129,9 @@ const BROTBESTELLUNG = "brotBestellung/";
 const DEADLINE = "deadline/";
 const LAST = "last/";
 const CURRENT = "getEndDateOfDeadline/";
-const GEBINDE = "gebinde/";
-const AUTODECIDE = "DiscrepancyAutoDecide/";
-const OVERVIWE = "bestellUebersicht/";
+const EINKAUF = "einkauf/";
+const BESTANDBUYOBJECT = "einkaufe/create/bestandBuyObject";
+const BESTELLUEBERSICHT = "bestellUebersicht/";
 
 
 // Produkt
@@ -166,14 +172,16 @@ const readKategorie = (id = undefined) => id ?
     fetch(BACKEND_URL + KATEGORIEN + id) :
     fetch(BACKEND_URL + KATEGORIEN);
 
-const createKategorie = (name, icon) =>
-    fetch(BACKEND_URL + KATEGORIEN, {
+const createKategorie = (name, icon, mixable) => {
+    console.log("Kategorie: ", name, icon, mixable);
+    return fetch(BACKEND_URL + KATEGORIEN, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({id: "", name, icon}),
+        body: JSON.stringify({ id: "", name, icon, mixable }),
     });
+}
 
 const updateKategorie = (id, name) =>
     fetch(BACKEND_URL + KATEGORIEN + id, {
@@ -343,7 +351,7 @@ const deleteBrotBestand = (id) =>
         },
     });
 
-// Deadline plugins/src/main/java/de/dhbw/foodcoop/warehouse/plugins/rest/DeadlineController.java
+// Deadline
 
 const readDeadline = (id = undefined) => id ?
     fetch(BACKEND_URL + DEADLINE + id) :
@@ -364,10 +372,14 @@ const createDeadline = (data) =>
         body: JSON.stringify({...data, id: "undefined"}),
     });
 
-// Autodecide Discrepancy
+// Einkauf
 
-const getDiscrepancy = (data) => 
-    fetch(BACKEND_URL + GEBINDE + AUTODECIDE, {
+const readEinkauf = (id = undefined) => id ?
+    fetch(BACKEND_URL + EINKAUF + id) :
+    fetch(BACKEND_URL + EINKAUF);
+
+const createEinkauf = (data) =>
+    fetch(BACKEND_URL + EINKAUF, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -375,7 +387,24 @@ const getDiscrepancy = (data) =>
         body: JSON.stringify({...data, id: "undefined"}),
     });
 
-// Übersicht letzte Bestellung
+const deleteEinkauf = (id) =>
+    fetch(BACKEND_URL + EINKAUF + id, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
 
-const readDiscrepancyOverviwe = () =>
-    fetch(BACKEND_URL + OVERVIWE + LAST);
+const createBestandBuyObject = (data) =>
+    fetch(BACKEND_URL + BESTANDBUYOBJECT, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({...data, id: "undefined"}),
+    });
+
+
+// Bestellübersicht
+const readBestellUebersicht = () =>
+    fetch(BACKEND_URL + BESTELLUEBERSICHT + LAST);

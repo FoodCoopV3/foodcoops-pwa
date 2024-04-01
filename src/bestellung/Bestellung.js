@@ -8,6 +8,7 @@ import {deepAssign} from '../util'
 import {useApi} from '../ApiService';
 import {useKeycloak} from "@react-keycloak/web";
 import { DeadlineLogic } from '../deadline/DeadlineLogic';
+import NumberFormatComponent from '../logic/NumberFormatComponent';
 
 export function Bestellung(){
     const columns = React.useMemo(
@@ -24,20 +25,28 @@ export function Bestellung(){
                 accessor: 'herkunftsland',
             },
             {
+                Header: 'Kategorie',
+                accessor: 'kategorie.name',
+            },
+            {
                 Header: 'Preis in €',
                 accessor: 'preis',
+                Cell: ({ value }) => <NumberFormatComponent value={value}/>,
             },
             {
                 Header: 'Gebindegröße',
                 accessor: 'gebindegroesse',
+                Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
             },
             {
                 Header: 'Gesamtbestellung',
                 accessor: 'bestellsumme',
+                Cell: ({ value }) => <NumberFormatComponent value={value}/>,
             },
             {
                 Header: 'Bestellmenge',
                 accessor: 'bestellmenge',
+                Cell: ({ value }) => <NumberFormatComponent value={value}/>,
             },
             {
                 Header: 'Einheit',
@@ -108,7 +117,6 @@ export function Bestellung(){
 
     const checkAlreadyOrdered = (frischBestandId) =>{
         for(let j = 0; j < frischBestellung.length; j++){
-            //console.log("FBSD: " + frischBestellung[j].frischbestand.id)
             if(frischBestandId == frischBestellung[j].frischbestand.id){
                 return frischBestellung[j].id;
             }
@@ -148,6 +156,7 @@ export function Bestellung(){
                 deepAssign("frischbestand", result, supported);
                 deepAssign("bestellmenge", result, bestellmenge);
                 deepAssign("datum", result, datum);
+                deepAssign("type", result, "frisch");
 
                 //Überprüfe ob bereits eine Bestellung in dieser Woche getätigt wurde
                 let check = checkAlreadyOrdered(frischBestandId);
@@ -225,7 +234,7 @@ export function Bestellung(){
         }
         clearInputFields();
         forceUpdate();
-        document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
+        document.getElementById("preis").innerHTML = "Preis: " + preis + " €";
         toast.success("Ihre Bestellung wurde übermittelt. Vielen Dank!");
     };
 

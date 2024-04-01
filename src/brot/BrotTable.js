@@ -1,15 +1,16 @@
-import {useExpanded, useTable} from "react-table";
+import { useExpanded, useTable, useSortBy } from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
 
-export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
+export function BrotTable({ columns, data, skipPageReset }) {
+    const NotAvailableColor = '#D3D3D3';
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
         rows,
         prepareRow,
-        state: {expanded},
+        state: { expanded },
     } = useTable(
         {
             columns,
@@ -17,9 +18,12 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
             getSubRows: row => row.produkte,
             autoResetPage: !skipPageReset,
             autoResetExpanded: !skipPageReset,
+            initialState: { sortBy: [{ id: 'name' }] },
         },
+        useSortBy, 
         useExpanded
-    )
+    );
+    
 
     const calculatePrice = () => {
         let preis = 0;
@@ -27,9 +31,9 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
             let bestellId = "Inputfield" + i;
             let bestellmenge = document.getElementById(bestellId).value;
             let preisId = "PreisId" + i;
-            preis += document.getElementById(preisId).innerText * bestellmenge;
+            preis += document.getElementById(preisId).innerText.replace(',', '.') * bestellmenge;
         }
-        document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
+        document.getElementById("preis").innerHTML = "Preis: " + preis.toFixed(2).replace('.', ',') + " €";
     }
 
     return (
@@ -42,7 +46,12 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
                    // Hide the 'BrotID' header
                    return null;
                  } else {
-                   return <th {...column.getHeaderProps()}>{column.render("Header")}</th>;
+                   return <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                        {column.render("Header")}
+                        <span>
+                            {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
+                        </span>
+                    </th>;
                  }
                })}
              </tr>
@@ -77,7 +86,7 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
                                         }
                                         else{
                                             return(
-                                                <td{...props} id = {id} style={{color:'grey'}}>
+                                                <td{...props} id = {id} style={{color:NotAvailableColor}}>
                                                     {cell.render('Cell')}
                                                 </td>
                                             );
@@ -93,24 +102,24 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
                                             }
                                             if(data[row.index].verfuegbarkeit == true){
                                                 return(
-                                                    <input type="text" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()}></input>
+                                                    <td><input type="number" min="0" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()}></input></td>
                                                 )
                                             }
                                             else{
                                                 return(
-                                                    <input type="text" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()} disabled></input>
+                                                    <td><input type="number" min="0" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()} disabled></input></td>
                                                 )
                                             }
                                         }
                                         else{
                                             if(data[row.index].verfuegbarkeit == true){
                                                 return(
-                                                    <input type="text" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()}></input>
+                                                    <td><input type="number" min="0" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()}></input></td>
                                                 )
                                             }
                                             else{
                                                 return(
-                                                    <input type="text" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()} disabled></input>
+                                                    <td><input type="number" min="0" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()} disabled></input></td>
                                                 )
                                             }
                                         }
@@ -126,7 +135,7 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
                                         }
                                         else{
                                             return(
-                                                <td{...props} id = {id} style={{color:'grey'}}>
+                                                <td{...props} id = {id} style={{color:NotAvailableColor}}>
                                                     {cell.render('Cell')}
                                                 </td>
                                             )
@@ -142,7 +151,7 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
                                         }
                                         else{
                                             return (
-                                                <td {...props} style={{color:'grey'}}>
+                                                <td {...props} style={{color:NotAvailableColor}}>
                                                     {cell.render('Cell')}
                                                 </td>
                                             )
@@ -155,6 +164,4 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
             </tbody>
         </BTable>
     )
-
-
 }

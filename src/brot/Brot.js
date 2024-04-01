@@ -8,6 +8,7 @@ import {useKeycloak} from "@react-keycloak/web";
 import { BrotTable } from './BrotTable';
 import { deepAssign } from '../util';
 import { DeadlineLogic } from '../deadline/DeadlineLogic';
+import NumberFormatComponent from '../logic/NumberFormatComponent';
 
 export function Brot(){
     const columns = React.useMemo(
@@ -20,16 +21,20 @@ export function Brot(){
                 accessor: 'name',
             },
             {
-                Header: 'Gewicht',
+                Header: 'Gewicht in kg',
                 accessor: 'gewicht',
+                Cell: ({ value }) => <NumberFormatComponent value={value} />,
             },
             {
                 Header: 'Preis in €',
                 accessor: 'preis',
+                Cell: ({ value }) => <NumberFormatComponent value={value} />,
+                
             },
             {
                 Header: 'Bestellmenge',
                 accessor: 'bestellmenge',
+                Cell: ({ value }) => <NumberFormatComponent value={value} />,
             }
         ]
     );
@@ -117,8 +122,6 @@ export function Brot(){
             let datum = new Date();
             let bestellId = "Inputfield" + i;
             let bestellmenge = document.getElementById(bestellId).value;
-            console.log(bestellId)
-            console.log("1: " + document.getElementById(bestellId));
             //Check if Bestellmenge is valid
             if (bestellmenge == "") {
             } 
@@ -128,15 +131,13 @@ export function Brot(){
                 deepAssign("brotbestand", result, supported);
                 deepAssign("bestellmenge", result, bestellmenge);
                 deepAssign("datum", result, datum);
+                deepAssign("type", result, "brot");
 
                 //Überprüfe ob bereits eine Bestellung in dieser Woche getätigt wurde
                 let check = checkAlreadyOrdered(brotBestandId);
                 if(check != null){
                     //Bestellung updaten
-                    console.log(bestellId)
-                    console.log("2: " + bestellmenge <= 10);
                     if (bestellmenge <= 10) {
-                        console.log("3: " + bestellmenge);
                         (async function () {
                             const response = await api.updateBrotBestellung(result, check);
                             if(response.ok) {
@@ -209,7 +210,7 @@ export function Brot(){
         }
         clearInputFields();
         forceUpdate();
-        document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
+        document.getElementById("preis").innerHTML = "Preis: " + preis + " €";
         toast.success("Ihre Bestellung wurde übermittelt. Vielen Dank!");
     };
 

@@ -1,11 +1,12 @@
 import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import {LagerModal} from "./LagerModal";
+import {BrotBestandModal} from "./BrotBestandModal";
+import NumberFormatComponent from "../logic/NumberFormatComponent";
 
-export function EditProduktModal(props) {
+export function EditBrotBestandModal(props) {
     const rowData = props.rowData || [];
-    const [newData, setNewData] = React.useState({});    
+    const [newData, setNewData] = React.useState({});
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
 
     const close = () => {
@@ -20,7 +21,7 @@ export function EditProduktModal(props) {
     };
 
     const remove = () => {
-        props.deleteProdukt(props.rowId);
+        props.deleteBrotBestand(props.rowId);
         close();
     };
 
@@ -30,77 +31,29 @@ export function EditProduktModal(props) {
         ...newData
     };
 
-    const title = "Produkt bearbeiten";
+    const title = "BrotBestand bearbeiten";
 
     const mapper = ([accessor, {name, value}]) => {
-        if (accessor === "lagerbestand.einheit.name") {
-            const selectedEinheit = value;
-            const onChange = function ({target: {value}}) {
-                const changed = {};
-                changed["lagerbestand.einheit.id"] = {name, value};
-                return setNewData(prev => ({...prev, ...changed}));
-            };
+        if (accessor === "verfuegbarkeit") {
             return <tr key={accessor}>
                 <td>
                     <label style={{margin: 0}}>{name}:</label>
                 </td>
                 <td>
-                    <div>
-                        <select onChange={onChange} style={{width: "100%"}}>
-                            {props.einheiten.map(function({name, id}, i){
-                                if (selectedEinheit== name){
-                                    return (<option key={i} selected="selected" value={id}>{name}</option>)
-                                }
-                                return ((<option key={i} value={id}>{name}</option>));
-                            },selectedEinheit)}
-                        </select>
-                    </div>
+                    <input
+                        name={name}
+                        type="checkbox"
+                        checked={value}
+                        onChange={({target: {checked}}) => {
+                            const changed = {};
+                            changed[accessor] = {name, value: checked};
+                            setNewData(prev => ({...prev, ...changed}));
+                        }}
+                    />
                 </td>
-            </tr>
+            </tr>;
         }
-        if (accessor === "kategorie.name") {
-            const selectedKategorie = value;
-            const onChange = function ({target: {value}}) {
-                const changed = {};
-                changed["kategorie.id"] = {name, value};
-                return setNewData(prev => ({...prev, ...changed}));
-            };
-            return <tr key={accessor}>
-                <td>
-                    <label style={{margin: 0}}>{name}:</label>
-                </td>
-                <td>
-                    <div>
-                        <select onChange={onChange} style={{width: "100%"}}>
-                            {props.kategorien.map(function({name, id}, i){
-                                if (selectedKategorie == name){
-                                    return (<option key={i} selected="selected" value={id}>{name}</option>)
-                                }
-                                return ((<option key={i} value={id}>{name}</option>));
-                            },selectedKategorie)}
-                        </select>
-                    </div>
-                </td>
-            </tr>
-        } else if (accessor === "preis") {
-            return <tr key={accessor}>
-                <td>
-                    <label style={{margin: 0}}>{name}:</label>
-                </td>
-                <td>
-                    <input
-                        name={name}
-                        min="0"
-                        type="number"
-                        value={value}
-                        onChange={function ({target: {value}}) {
-                            const changed = {};
-                            changed[accessor] = {name, value};
-                            return setNewData(prev => ({...prev, ...changed}));
-                        }}/>
-                </td>
-            </tr>;
-        } else if (accessor === "lagerbestand.sollLagerbestand") {
+        if (accessor === "preis") {
             return <tr key={accessor}>
                 <td>
                     <label style={{margin: 0}}>{name}:</label>
@@ -118,7 +71,8 @@ export function EditProduktModal(props) {
                         }}/>
                 </td>
             </tr>;
-        } else if (accessor === "lagerbestand.istLagerbestand") {
+        }
+        if (accessor === "gewicht") {
             return <tr key={accessor}>
                 <td>
                     <label style={{margin: 0}}>{name}:</label>
@@ -154,18 +108,16 @@ export function EditProduktModal(props) {
         </tr>;
     };
     const body = Object.entries(merged)
-        .filter(([a, {}])=> a !== "lagerbestand.einheit.id")
-        .filter(([a, {}])=> a !== "kategorie.id")
         .map(mapper);
 
     const footer = <>
-        <Button variant="danger" onClick={remove}>Produkt löschen</Button>
+        <Button variant="danger" onClick={remove}>BrotBestand löschen</Button>
         <Button onClick={close}>Änderungen verwerfen</Button>
         <Button onClick={save}>Änderungen übernehmen</Button>
     </>;
 
     return (
-        <LagerModal
+        <BrotBestandModal
             title={title}
             body={body}
             footer={footer}

@@ -2,7 +2,7 @@ import React from "react";
 import { useExpanded, useTable, useSortBy } from "react-table";
 import BTable from "react-bootstrap/Table";
 
-export function GebindemanagementTable({ columns, data, skipPageReset }) {
+export function BrotBestandTable({ columns, data, skipPageReset, dispatchModal }) {
     const {
         getTableProps,
         getTableBodyProps,
@@ -16,10 +16,10 @@ export function GebindemanagementTable({ columns, data, skipPageReset }) {
             getSubRows: row => row.produkte,
             autoResetPage: !skipPageReset,
             autoResetExpanded: !skipPageReset,
-            initialState: { sortBy: [{ id: 'frischbestand.kategorie.name'}] },
+            initialState: { sortBy: [{ id: 'name'}] },
         },
         useSortBy,
-        useExpanded
+        useExpanded,
     );
 
     return (
@@ -45,16 +45,18 @@ export function GebindemanagementTable({ columns, data, skipPageReset }) {
                         <tr {...row.getRowProps()}>
                             {row.cells.map((cell, i) => {
                                 const props = cell.getCellProps();
+                                props.onClick = () => dispatchModal("EditBrotBestandModal", cell, row);
+                                props.style = { ...props.style, cursor: "pointer" };
                                 return (
                                     <td {...props}>
-                                        {cell.render('Cell')}
+                                        {cell.column.id === 'verfuegbarkeit' ? (cell.value ? 'Ja' : 'Nein') : cell.render('Cell')}
                                     </td>
-                                );
+                                )
                             })}
                         </tr>
-                    );
+                    )
                 })}
             </tbody>
         </BTable>
-    );
+    )
 }
