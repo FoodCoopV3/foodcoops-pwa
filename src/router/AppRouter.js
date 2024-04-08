@@ -12,7 +12,6 @@ import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import Divider from '@mui/material/Divider';
 import { styled } from '@mui/material/styles';
 import React, { useState } from 'react';
 import { Link, Route, BrowserRouter as Router, Switch, useLocation } from 'react-router-dom';

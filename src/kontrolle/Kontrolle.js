@@ -22,7 +22,7 @@ export function Kontrolle() {
     useEffect(() => {
       const fetchDiscrepancyList = async () => {
         try {
-          const response = await api.readDiscrepancyOverviwe();
+          const response = await api.readBestellUebersicht();
           const data = await response.json();
           if (data && data.discrepancy) {
             getDiscrepancyList(data.discrepancy);
