@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Card, ListGroup } from "react-bootstrap";
+import {Card, Dropdown, ListGroup, Button } from "react-bootstrap";
 import "./kontrolle.css";
+import { PlusCircle } from "react-bootstrap-icons";
+import { DashCircle } from "react-bootstrap-icons";
 
 
-export function Kontrolle(){
-
+export function Kontrolle() {
     const foodItems = [
         "Apfel",
+        "Apfel mit einem grünen Belag. Ich glaube das ist ein Schimmel.",
         "Banane",
         "Karotte",
         "Tomate",
@@ -27,42 +29,90 @@ export function Kontrolle(){
         "Erdnussbutter",
         "Honig",
         "Schokolade"
-      ];
+    ];
 
-    const initialSelections = Array.from({length: foodItems.length}, (_, index) => ({id: index, selection: null}));
+    // Initialisierung von selections mit einer neuen Eigenschaft für die Einheit
+    const initialSelections = Array.from({length: foodItems.length}, (_, index) => ({id: index, selection: null, unit: "Einheit"}));
 
-    const [selections, setSelections] = React.useState(initialSelections);
+    const [selections, setSelections] = useState(initialSelections);
 
     const handleSelection = (itemId, option) => {
-        setSelections(prevSelections  => {
+        setSelections(prevSelections => {
             return prevSelections.map(selection => {
                 if (selection.id === itemId) {
-                    return{ ...selection, selection: option};
+                    return { ...selection, selection: option };
                 }
                 return selection;
             });
         });
     };
 
-    
+    // Diese Funktion aktualisiert nun die Einheit für das spezifische Lebensmittel
+    const handleUnitSelect = (itemId, unit) => {
+        setSelections(prevSelections => {
+            return prevSelections.map(selection => {
+                if (selection.id === itemId) {
+                    return { ...selection, unit: unit };
+                }
+                return selection;
+            });
+        });
+    };
 
-    const content = () => {
-        return(
-            <div style={{display: "flex", justifyContent: "center"}}>
-                <Card style={{marginTop: '20px', maxWidth: 'calc(100% - 100px)', width: '100%', height: '1000px', overflowY: selections.length > 10 ? 'scroll' : 'auto' }}>
+    const listContent = () => {
+        return (
+            <div className="card-container">
+                <Card className="mt-4">
                     <ListGroup>
                         {selections.map((item, index) => (
                             <ListGroup.Item key={item.id} className="custom-list-group-item">
-                                <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
-                                    <div style={{flexBasis: '33.333%', textAlign: "left"}}>
-                                        {foodItems[index]}
+                                <div className="d-flex align-items-center justify-content-between">
+
+                                    {/* Linke Spalte: Name des Elements */}
+                                    <div className="left-column">
+                                        <div className="long-text">
+                                            {foodItems[index]}
+                                        </div>
                                     </div>
-                                    <div style={{flexBasis: '33.333%', textAlign: "center"}}>
-                                        <button style={{marginRight: "10px", width: "100px", height: "30px", backgroundColor: item.selection === "option1" ? "green" : "gray", color: "white", borderRadius: "8px", border: "none"}} onClick={() => handleSelection(item.id, "option1")}>Zu viel</button>
-                                        <button style={{marginRight: "10px", width: "100px", height: "30px", backgroundColor: item.selection === "option2" ? "red" : "gray", color: "white", borderRadius: "8px", border: "none"}} onClick={() => handleSelection(item.id, "option2")}>Zu wenig</button>
-                                    </div>
-                                    <div style={{flexBasis: '33.333%', textAlign: "right"}}>
-                                        <input type="text" style={{maxWidth: '100%'}} />
+
+                                    {/* Rechte Spalte: Buttons, Eingabefeld und Dropdown */}
+                                    
+                                    <div className="right-column">
+                                        {/*Buttons*/}
+                                        <Button
+                                            variant={item.selection === "option1" ? "success" : "secondary"}
+                                            className="mr-2"
+                                            style={{width: "120px", height: "40px",}}
+                                            onClick={() => {
+                                                handleSelection(item.id, item.selection === "option1" ? null : "option1");
+                                            }}
+                                        >
+                                           <PlusCircle /> <span>Zu viel</span>
+                                        </Button>
+                                        <Button
+                                            variant={item.selection === "option2" ? "danger" : "secondary"}
+                                            style={{ width: "120px", height: "40px" }}
+                                            onClick={() => {
+                                                handleSelection(item.id, item.selection === "option2" ? null : "option2");
+                                            }}
+                                        >
+                                           <DashCircle /> <span>Zu wenig</span>
+                                        </Button>
+                                    
+                                        {/*Eingabefeld*/}
+                                        <input type="text" style={{width: "90px", height: "40px",marginRight: '10px', marginLeft: '10px'}}/>
+                                    
+                                        {/*Dropdown*/}
+                                        <Dropdown>
+                                            <Dropdown.Toggle variant="primary" id="dropdown-basic" className="dropdown-toggle-custom">
+                                                {item.unit}
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                                <Dropdown.Item onClick={() => handleUnitSelect(item.id, "Kilogramm")}>Kilogramm</Dropdown.Item>
+                                                <Dropdown.Item onClick={() => handleUnitSelect(item.id, "Liter")}>Liter</Dropdown.Item>
+                                                <Dropdown.Item onClick={() => handleUnitSelect(item.id, "Stück")}>Stück</Dropdown.Item>
+                                            </Dropdown.Menu>
+                                        </Dropdown>
                                     </div>
                                 </div>
                             </ListGroup.Item>
@@ -73,9 +123,18 @@ export function Kontrolle(){
         );
     }
 
-    return(
-        <div>
-            {content()}
+    const submitButton = () => {
+        return(
+            <div style={{marginTop: "20px"}}>
+                <Button variant="success" style={{width: "150px"}}>Submit</Button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="Content">
+            {listContent()}
+            {submitButton()}
         </div>
     );
 }
