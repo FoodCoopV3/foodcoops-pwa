@@ -105,6 +105,8 @@ export const useApi = () => {
         createDeadline,
 
         readDiscrepancyOverviwe,
+        getDiscrepancy,
+        updateDescrepancy,
     };
 };
 
@@ -126,6 +128,10 @@ const CURRENT = "getEndDateOfDeadline/";
 const GEBINDE = "gebinde/";
 const AUTODECIDE = "DiscrepancyAutoDecide/";
 const OVERVIWE = "bestellUebersicht/";
+const DESCREPANCY = "descrepancy/";
+const UPDATE = "update/";
+const AMOUNT_TO_ORDER = "gebindeAmountToOrder/";
+const TOOMUCHTOLITTLE = "tooMuchTooLittle/"
 
 
 // Produkt
@@ -397,3 +403,14 @@ const getDiscrepancy = (data) =>
 
 const readDiscrepancyOverviwe = () =>
     fetch(BACKEND_URL + OVERVIWE + LAST);
+
+// Update zu Viel zu Wenig Liste
+
+const updateDescrepancy = (data, descrepancyId) =>
+    fetch(BACKEND_URL + GEBINDE + DESCREPANCY + UPDATE + TOOMUCHTOLITTLE + descrepancyId, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({...data, id: descrepancyId}),
+    });
