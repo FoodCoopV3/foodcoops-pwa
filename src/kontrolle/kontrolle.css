@@ -1,0 +1,13 @@
+.custom-list-group-item {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  
+  /* Entfernt den Abstand vom ersten und letzten Item, wenn nicht gewünscht */
+  .custom-list-group-item:first-child {
+    margin-top: 0;
+  }
+  
+  .custom-list-group-item:last-child {
+    margin-bottom: 0;
+  }
