@@ -6,6 +6,7 @@ import { About } from '../About';
 import { MainBestellung } from '../bestellung/MainBestellung';
 import { MainEinkauf } from '../einkauf/MainEinkauf';
 import { MainManagement } from '../MainManagement';
+import { MainKontrolle } from '../kontrolle/MainKontrolle';
 import { PrivateRoute } from '../auth/PrivateRoute';
 import { Home } from '../Home';
 import { Typography } from "@mui/material";
@@ -55,6 +56,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
       '/mainEinkauf': 'Einkauf',
       '/mainManagement': 'Management',
       '/mainBestellungskontrolle': 'Bestellungskontrolle',
+      '/mainBestellungskontrolle': 'Bestellungskontrolle',
       '/about': 'Impressum',
     };
 
@@ -92,62 +94,29 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
                   </ListItemIcon>
                   <Typography variant="h6">
                   Bestellung
-                  </Typography>
-                </ListItemButton>
-              </Link>
-              <Link to="/mainEinkauf">
-                <ListItemButton sx={{ color: "grey" }}>
-                  <ListItemIcon> 
-                    <ShoppingCartIcon/>
-                  </ListItemIcon>
-                  <Typography variant="h6">
-                    Einkauf
-                  </Typography>
-                </ListItemButton>
-              </Link>
-              <Link to="/mainManagement">
-                <ListItemButton sx={{ color: "grey" }}>
-                  <ListItemIcon> 
-                    <InventoryIcon/>
-                  </ListItemIcon>
-                  <Typography variant="h6">
-                    Management
-                  </Typography>
-                </ListItemButton>
-              </Link>
-              <Divider />
-              <Link to="/about">
-                <ListItemButton sx={{ color: "grey" }}>
-                  <ListItemIcon> 
-                    <InfoIcon/>
-                  </ListItemIcon>
-                  <Typography variant="h6">
-                    Impressum
-                  </Typography>
-                </ListItemButton>
-              </Link>
-            </List>
-          </>
+                </Link>
+              </li>
+              <li>
+                <Link to="/mainEinkauf" onClick={toggleMenu}>
+                  Einkauf
+                </Link>
+              </li>
+              <li>
+                <Link to="/mainManagement" onClick={toggleMenu}>
+                  Management
+                </Link>
+              </li>
+              <li>
+                <Link to="/mainBestellungskontrolle" onClick={toggleMenu}>
+                  Bestellungskontrolle
+                </Link>
+              </li>
+              <li>
+                <AuthButton />
+              </li>
+            </ul>
+          </nav>
         )}
-        <AuthButton/>
-    </Box>
-);
-
-  return (
-    <div>
-      <div className={`Header`}>
-        <BurgerMenuButton variant="contained" size="large" disableElevation color='secondary' className="BurgerButton" onClick={toggleMenu(true)}>
-          ☰
-        </BurgerMenuButton>
-        <Drawer open={menuOpen} onClose={toggleMenu(false)}>
-          <div
-            role="presentation"
-            onClick={toggleMenu}
-            onKeyDown={toggleMenu}
-          >
-            {itemsList()}
-          </div>
-        </Drawer>
         <h1 className='CurrentSiteName'>{getPageName()}</h1>
         <Link to="/home">
           <img className="LogoImage" src="manifest-icon-512.png" alt="logo" />
@@ -159,6 +128,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
         <PrivateRoute roles={["Einkäufer"]} path="/mainBestellung" component={MainBestellung} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainEinkauf" component={MainEinkauf} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainManagement" component={MainManagement} />
+        <PrivateRoute roles={["Einkäufer"]} path="/mainBestellungskontrolle" component={MainKontrolle} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainBestellungskontrolle" component={MainKontrolle} />
         <Route path="/" component={Home} />
       </Switch>
