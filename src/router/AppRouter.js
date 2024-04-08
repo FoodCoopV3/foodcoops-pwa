@@ -1,14 +1,9 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Link, Route, Switch, useLocation } from 'react-router-dom';
-import { useKeycloak } from "@react-keycloak/web";
-import { AuthButton } from '../auth/AuthButton';
-import { About } from '../About';
-import { MainBestellung } from '../bestellung/MainBestellung';
-import { MainEinkauf } from '../einkauf/MainEinkauf';
-import { MainManagement } from '../MainManagement';
-import { MainKontrolle } from '../kontrolle/MainKontrolle';
-import { PrivateRoute } from '../auth/PrivateRoute';
-import { Home } from '../Home';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import FactCheckIcon from '@mui/icons-material/FactCheck';
+import HomeIcon from '@mui/icons-material/Home';
+import InfoIcon from '@mui/icons-material/Info';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -65,58 +60,99 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
 
   const itemsList = () => (
       <Box sx={{ width: 350 }} role="presentation" onClick={toggleMenu(false)}>
-        {!keycloak.authenticated && (
-          <>
-            <List>
-              <Typography variant="h6" sx={{ color: "grey", textAlign: "center", padding: 1, margin: 2}}>
-                Sie müssen sich anmelden, um die Anwendung nutzen zu können.
+        <List>
+          <Link to="/home">
+            <ListItemButton sx={{ color: "grey" }}>
+              <ListItemIcon> 
+                <HomeIcon/>
+              </ListItemIcon>
+              <Typography variant="h6">
+                Home
               </Typography>
-            </List>
-          </>
-        )}
-        {keycloak.authenticated && (
-          <>
-            <List>
-              <Link to="/home">
-                <ListItemButton sx={{ color: "grey"}}>
-                  <ListItemIcon> 
-                    <HomeIcon/>
-                  </ListItemIcon>
-                  <Typography variant="h6">
-                    Home
-                  </Typography>
-                </ListItemButton>
-              </Link>
-              <Link to="/mainBestellung">
-                <ListItemButton sx={{ color: "grey" }}>
-                  <ListItemIcon> 
-                    <AddShoppingCartIcon/>
-                  </ListItemIcon>
-                  <Typography variant="h6">
-                  Bestellung
-                </Link>
-              </li>
-              <li>
-                <Link to="/mainEinkauf" onClick={toggleMenu}>
-                  Einkauf
-                </Link>
-              </li>
-              <li>
-                <Link to="/mainManagement" onClick={toggleMenu}>
-                  Management
-                </Link>
-              </li>
-              <li>
-                <Link to="/mainBestellungskontrolle" onClick={toggleMenu}>
-                  Bestellungskontrolle
-                </Link>
-              </li>
-              <li>
-                <AuthButton />
-              </li>
-            </ul>
-          </nav>
-        )}
+            </ListItemButton>
+          </Link>
+          <Link to="/mainBestellung">
+            <ListItemButton sx={{ color: "grey" }}>
+              <ListItemIcon> 
+                <AddShoppingCartIcon/>
+              </ListItemIcon>
+              <Typography variant="h6">
+               Bestellung
+              </Typography>
+            </ListItemButton>
+          </Link>
+          <Link to="/mainEinkauf">
+            <ListItemButton sx={{ color: "grey" }}>
+              <ListItemIcon> 
+                <ShoppingCartIcon/>
+              </ListItemIcon>
+              <Typography variant="h6">
+                Einkauf
+              </Typography>
+            </ListItemButton>
+          </Link>
+          <Link to="/mainManagement">
+            <ListItemButton sx={{ color: "grey" }}>
+              <ListItemIcon> 
+                <InventoryIcon/>
+              </ListItemIcon>
+              <Typography variant="h6">
+                Management
+              </Typography>
+            </ListItemButton>
+          </Link>
+          <Link to="/mainBestellungskontrolle">
+            <ListItemButton sx={{ color: "grey" }}>
+              <ListItemIcon>
+                <FactCheckIcon />
+              </ListItemIcon>
+              <Typography variant="h6">
+                Bestellungskontrolle
+              </Typography>
+            </ListItemButton>
+          </Link>
+          <Divider />
+          <Link to="/about">
+            <ListItemButton sx={{ color: "grey" }}>
+              <ListItemIcon>
+                <InfoIcon/>
+              </ListItemIcon>
+              <Typography variant="h6">
+                Impressum
+              </Typography>
+            </ListItemButton>
+          </Link>
+        </List>
+        <Typography
+            sx={{
+                backgroundColor: "#333",
+                color: "white",
+                borderRadius: 10,
+                textAlign: "center",
+                padding: 1,
+                margin: 2,
+            }}
+        >
+          <AuthButton/>
+        </Typography>
+    </Box>
+);
+
+  return (
+    <div>
+      <div className={`Header`}>
+        <BurgerMenuButton variant="contained" size="large" disableElevation color='secondary' className="BurgerButton" onClick={toggleMenu(true)}>
+          ☰
+        </BurgerMenuButton>
+        <Drawer open={menuOpen} onClose={toggleMenu(false)}>
+          <div
+            role="presentation"
+            onClick={toggleMenu}
+            onKeyDown={toggleMenu}
+          >
+            {itemsList()}
+          </div>
+        </Drawer>
         <h1 className='CurrentSiteName'>{getPageName()}</h1>
         <Link to="/home">
           <img className="LogoImage" src="manifest-icon-512.png" alt="logo" />

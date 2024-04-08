@@ -1,8 +1,9 @@
-import React, {useState} from "react";
-import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom/";
-import Paper from "@material-ui/core/Paper";
-import Tab from "@material-ui/core/Tab";
-import Tabs from "@material-ui/core/Tabs";
+import Paper from '@mui/material/Paper';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState } from "react";
+import { Link, Redirect, Route, BrowserRouter as Router, Switch } from "react-router-dom/";
 import { Kontrolle } from "./Kontrolle";
 
 export function MainKontrolle(){
