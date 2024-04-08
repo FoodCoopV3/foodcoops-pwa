@@ -10,11 +10,11 @@ export function Kontrolle(){
 
     const content = () => {
         return(
-            <div>
-                <dic>
-                TODO: "Zu viel / Zu wenig Liste implementieren"
-                </dic>
-            </div>
+            <dic>
+            <Card>
+                <Card.Body>This ist some text</Card.Body>
+            </Card>
+            </dic>
         );
     }
 
