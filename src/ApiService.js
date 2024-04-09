@@ -47,13 +47,7 @@ export const ApiProvider = (props) => {
         readCurrentDeadline: props.readCurrentDeadline || readCurrentDeadline,
         createDeadline: props.createDeadline || createDeadline,
 
-        readEinkauf: props.readEinkauf || readEinkauf,
-        createEinkaufPdf: props.createEinkaufPdf || createEinkaufPdf,
-        createEinkauf: props.createEinkauf || createEinkauf,
-        deleteEinkauf: props.deleteEinkauf || deleteEinkauf,
-        createBestandBuyObject: props.createBestandBuyObject || createBestandBuyObject,
-
-        readBestellUebersicht: props.readBestellUebersicht || readBestellUebersicht,
+        readDiscrepancyOverviwe: props.readDiscrepancyOverviwe || readDiscrepancyOverviwe,
     };
 
     return (
@@ -110,13 +104,9 @@ export const useApi = () => {
         readCurrentDeadline,
         createDeadline,
 
-        readEinkauf,
-        createEinkaufPdf,
-        createEinkauf,
-        deleteEinkauf,
-        createBestandBuyObject,
-
-        readBestellUebersicht,
+        readDiscrepancyOverviwe,
+        getDiscrepancy,
+        updateDescrepancy,
     };
 };
 
@@ -135,10 +125,13 @@ const BROTBESTELLUNG = "brotBestellung/";
 const DEADLINE = "deadline/";
 const LAST = "last/";
 const CURRENT = "getEndDateOfDeadline/";
-const EINKAUF = "einkauf/";
-const PDF = "pdf/";
-const BESTANDBUYOBJECT = "einkaufe/create/bestandBuyObject";
-const BESTELLUEBERSICHT = "bestellUebersicht/";
+const GEBINDE = "gebinde/";
+const AUTODECIDE = "DiscrepancyAutoDecide/";
+const OVERVIWE = "bestellUebersicht/";
+const DESCREPANCY = "descrepancy/";
+const UPDATE = "update/";
+const AMOUNT_TO_ORDER = "gebindeAmountToOrder/";
+const TOOMUCHTOLITTLE = "tooMuchTooLittle/"
 
 
 // Produkt
@@ -395,23 +388,10 @@ const createDeadline = (data) =>
         body: JSON.stringify({...data, id: "undefined"}),
     });
 
-// Einkauf
+// Autodecide Discrepancy
 
-const readEinkauf = (id = undefined) => id ?
-    fetch(BACKEND_URL + EINKAUF + id) :
-    fetch(BACKEND_URL + EINKAUF);
-
-const createEinkaufPdf = (id, email) =>
-    fetch(BACKEND_URL + EINKAUF + PDF + id, {
-        method: 'POST', 
-        headers: {
-        'Content-Type': 'application/json',
-        },
-        body: email,
-});
-
-const createEinkauf = (data) =>
-    fetch(BACKEND_URL + EINKAUF, {
+const getDiscrepancy = (data) => 
+    fetch(BACKEND_URL + GEBINDE + AUTODECIDE, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -419,24 +399,18 @@ const createEinkauf = (data) =>
         body: JSON.stringify({...data, id: "undefined"}),
     });
 
-const deleteEinkauf = (id) =>
-    fetch(BACKEND_URL + EINKAUF + id, {
-        method: "DELETE",
+// Übersicht letzte Bestellung
+
+const readDiscrepancyOverviwe = () =>
+    fetch(BACKEND_URL + OVERVIWE + LAST);
+
+// Update zu Viel zu Wenig Liste
+
+const updateDescrepancy = (data, descrepancyId) =>
+    fetch(BACKEND_URL + GEBINDE + DESCREPANCY + UPDATE + TOOMUCHTOLITTLE + descrepancyId, {
+        method: "PUT",
         headers: {
             'Content-Type': 'application/json',
         },
+        body: JSON.stringify({...data, id: descrepancyId}),
     });
-
-const createBestandBuyObject = (data) =>
-    fetch(BACKEND_URL + BESTANDBUYOBJECT, {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({...data, id: "undefined"}),
-    });
-
-
-// Bestellübersicht
-const readBestellUebersicht = () =>
-    fetch(BACKEND_URL + BESTELLUEBERSICHT + LAST);

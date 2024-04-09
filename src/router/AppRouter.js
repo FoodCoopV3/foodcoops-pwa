@@ -1,27 +1,29 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Link, Route, Switch, useLocation } from 'react-router-dom';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useKeycloak } from "@react-keycloak/web";
-import { AuthButton } from '../auth/AuthButton';
-import { About } from '../About';
-import { MainBestellung } from '../bestellung/MainBestellung';
-import { MainEinkauf } from '../einkauf/MainEinkauf';
-import { MainManagement } from '../MainManagement';
-import { PrivateRoute } from '../auth/PrivateRoute';
-import { Home } from '../Home';
+import FactCheckIcon from '@mui/icons-material/FactCheck';
+import HomeIcon from '@mui/icons-material/Home';
+import InfoIcon from '@mui/icons-material/Info';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
 import Button from "@mui/material/Button";
+import Divider from '@mui/material/Divider';
+import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import Divider from '@mui/material/Divider';
 import { styled } from '@mui/material/styles';
-import HomeIcon from '@mui/icons-material/Home';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import InventoryIcon from '@mui/icons-material/Inventory';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import InfoIcon from '@mui/icons-material/Info';
+import React, { useState } from 'react';
+import { Link, Route, BrowserRouter as Router, Switch, useLocation } from 'react-router-dom';
+import { About } from '../About';
+import { Home } from '../Home';
+import { MainManagement } from '../MainManagement';
+import { AuthButton } from '../auth/AuthButton';
+import { PrivateRoute } from '../auth/PrivateRoute';
+import { MainBestellung } from '../bestellung/MainBestellung';
+import { MainEinkauf } from '../einkauf/MainEinkauf';
+import { MainKontrolle } from '../kontrolle/MainKontrolle';
 import './AppRouter.css';
 
 export const AppRouter = () => {
@@ -48,6 +50,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
       '/mainBestellung': 'Bestellung',
       '/mainEinkauf': 'Einkauf',
       '/mainManagement': 'Management',
+      '/mainBestellungskontrolle': 'Bestellungskontrolle',
       '/about': 'Impressum',
     };
 
@@ -108,10 +111,20 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
                   </Typography>
                 </ListItemButton>
               </Link>
-              <Divider />
+              <Link to="/mainBestellungskontrolle">
+            <ListItemButton sx={{ color: "grey" }}>
+              <ListItemIcon>
+                <FactCheckIcon />
+              </ListItemIcon>
+              <Typography variant="h6">
+                Bestellungskontrolle
+              </Typography>
+            </ListItemButton>
+          </Link>
+          <Divider />
               <Link to="/about">
                 <ListItemButton sx={{ color: "grey" }}>
-                  <ListItemIcon> 
+                  <ListItemIcon>
                     <InfoIcon/>
                   </ListItemIcon>
                   <Typography variant="h6">
@@ -152,6 +165,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
         <PrivateRoute roles={["Einkäufer"]} path="/mainBestellung" component={MainBestellung} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainEinkauf" component={MainEinkauf} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainManagement" component={MainManagement} />
+        <PrivateRoute roles={["Einkäufer"]} path="/mainBestellungskontrolle" component={MainKontrolle} />
         <Route path="/" component={Home} />
       </Switch>
     </div>
