@@ -15,6 +15,8 @@ import "./kontrolle.css";
 import { green, red } from '@mui/material/colors';
 import Card from 'react-bootstrap/Card';
 import {FormControl} from 'react-bootstrap';
+import {Form} from 'react-bootstrap';
+import {InputGroup} from 'react-bootstrap';
 
 export function Kontrolle() {
     const [discrepancyList, getDiscrepancyList] = useState([]);
@@ -72,12 +74,9 @@ export function Kontrolle() {
                         <Button variant='secondary'>Zu Viel</Button>
                       </div>
                       <div className="col-md-2">
-                        <FormControl
-                          type="number"
-                          value={Math.abs(item.zuVielzuWenig)}
-                          onChange={(e) => {
-                          }}
-                        />
+                        <InputGroup>
+                          <Form.Control placeholder={Math.abs(item.zuVielzuWenig)} aria-label='Username' aria-describedby='basic-addon1'/>
+                        </InputGroup>
                       </div>
                       <div className="col-md-2">
                         <Card.Text>{item.bestand.einheit.name}</Card.Text>
