@@ -12,6 +12,8 @@ import {NewProduktModal} from './NewProduktModal';
 import {deepAssign, deepClone} from '../util';
 import {EditEinheitenModal} from "./EditEinheitenModal";
 import NumberFormatComponent from '../logic/NumberFormatComponent';
+import {jsPDF} from "jspdf";
+import autoTable from 'jspdf-autotable';
 
 export function Lager() {
 
@@ -241,6 +243,27 @@ export function Lager() {
         })
     }
 
+    const createPDF = () => {
+        const doc = new jsPDF();
+
+        autoTable(doc, {
+            theme: 'striped',
+            head: [columns.map(col => col.Header)],
+            body: data.map(row => columns.map(col => {
+                try {
+                    const cellData = col.accessor.split(".").reduce((o, i) => o[i], row);
+                    return cellData instanceof Object ? JSON.stringify(cellData) : cellData; // Besserer Umgang mit Objekten
+                } catch (error) {
+                    console.error('Fehler beim Zugriff auf die Daten:', col.accessor, error);
+                    return ""; // Rückgabe eines leeren Strings im Fehlerfall
+                }
+            })),
+        });
+        
+        console.log(data)
+        doc.save("Exteren_Einkaufsliste.pdf");
+    }
+    
     const content = () => {
         if (isLoading) {
             return (
@@ -264,7 +287,7 @@ export function Lager() {
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("KategorienModal")}>Kategorie erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewProduktModal")}>Produkt erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("EinheitenModal")}>Einheiten erstellen</Button>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => window.open("http://152.53.32.66:8081/externeliste")}>Externe Einkaufsliste</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={createPDF}>Externe Einkaufsliste</Button>
             </Row>
             <div style={{overflowX: "auto", width: "100%"}}>
                 {content()}
