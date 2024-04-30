@@ -81,6 +81,27 @@ export function OrderOverview() {
         prepareRow: prepareBrotBestellungRow,
     } = useTable({columns: brotColumns, data: brotBestellungOverview}, useSortBy);
 
+    const aggregateBrotBestellungen = (brotBestellungen) => {
+        const aggregatedData = [];
+        const map = new Map();
+        
+        // Summiere die Bestellmengen nach Produktname
+        brotBestellungen.forEach((item) => {
+            if (map.has(item.brotBestand.name)) {
+                map.set(item.brotBestand.name, map.get(item.brotBestand.name) + item.bestellmenge);
+            } else {
+                map.set(item.brotBestand.name, item.bestellmenge);
+            }
+        });
+        
+        // Erstelle ein neues Array mit den aggregierten Daten
+        map.forEach((value, key) => {
+            aggregatedData.push({ brotBestand: { name: key }, bestellmenge: value });
+        });
+        
+        return aggregatedData;
+    };    
+
     useEffect(() => {
         const fetchBestellUebersicht = async () => {
             try {
@@ -97,7 +118,8 @@ export function OrderOverview() {
                 }
 
                 if (Array.isArray(data.brotBestellung)) {
-                    setBrotBestellungOverview(data.brotBestellung);
+                    const aggregatedBrotBestellungen = aggregateBrotBestellungen(data.brotBestellung);
+                    setBrotBestellungOverview(aggregatedBrotBestellungen);
                 } else {
                     setBrotBestellungOverview([]);
                 }
