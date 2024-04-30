@@ -245,19 +245,22 @@ export function Lager() {
 
     const createPDF = () => {
         const doc = new jsPDF();
+        
+        doc.text("Externe Einkaufsliste", 14, 10);
 
-        autoTable(doc, {
-            theme: 'striped',
-            head: [columns.map(col => col.Header)],
-            body: data.map(row => columns.map(col => {
-                try {
-                    const cellData = col.accessor.split(".").reduce((o, i) => o[i], row);
-                    return cellData instanceof Object ? JSON.stringify(cellData) : cellData; // Besserer Umgang mit Objekten
-                } catch (error) {
-                    console.error('Fehler beim Zugriff auf die Daten:', col.accessor, error);
-                    return ""; // Rückgabe eines leeren Strings im Fehlerfall
-                }
-            })),
+        const pdfData = data.map(row => {
+            const productName = row.name;
+            const sollLagerbestand = row.lagerbestand.sollLagerbestand;
+            const istLagerbestand = row.lagerbestand.istLagerbestand;
+            const differenz = sollLagerbestand - istLagerbestand;
+            return {productName, differenz};
+        })
+        .filter(({ differenz }) => differenz !== 0)
+        .map(({ productName, differenz }) => [productName, differenz]);;
+
+        doc.autoTable({
+            head: [['Produktname', 'Differenz']],
+            body: pdfData,
         });
         
         console.log(data)
